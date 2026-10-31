@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {route,comparison,parsePower,assistant,MENU,FAQ} from '../src/bot.mjs';
-import worker,{Player} from '../src/worker.mjs';
-import {verifiedThreshold} from '../src/data.mjs';
-import {setup} from '../scripts/telegram-setup.mjs';
+import {route,comparison,parsePower,assistant,MENU,FAQ} from './bot.mjs';
+import worker,{Player} from './worker.mjs';
+import {verifiedThreshold} from './data.mjs';
+import {setup} from './telegram-setup.mjs';
 const row={level:1,power:100,verified:true,evidence:'TEST ONLY',verifiedAt:'2026-10-31'};
 test('только три раздела',()=>assert.deepEqual(MENU.keyboard.flat().map(x=>x.text),['👻 Духи','👤 Мой профиль','❓ Помощь']));
 test('целые значения, границы, неверный ввод',()=>{
