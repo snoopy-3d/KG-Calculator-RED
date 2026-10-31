@@ -26,7 +26,9 @@ export async function source(path,net=fetch){
   try{
     const key=new Request(url,{headers:{Accept:'application/ld+json','Accept-Language':'ru'}});
     const saved=cache?await cache.match(key):null;
-    const r=saved ?? await net(url,{headers:{Accept:'application/ld+json','Accept-Language':'ru'},redirect:'error',signal:AbortSignal.timeout(6000)});
+    // Cloudflare поддерживает manual/follow, но не redirect:error.
+    // При manual ответы 3xx отклоняются ниже; чужие адреса не запрашиваются.
+    const r=saved ?? await net(url,{headers:{Accept:'application/ld+json','Accept-Language':'ru'},redirect:'manual',signal:AbortSignal.timeout(6000)});
     if(r.status===404)throw new SourceError('missing');
     if(!r.ok)throw new SourceError('unavailable');
     if(!r.headers.get('content-type')?.includes('json'))throw new SourceError('data');

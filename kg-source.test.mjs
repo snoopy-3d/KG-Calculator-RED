@@ -23,7 +23,7 @@ test('точные строки мощи, отказ от уже округлё�
 });
 test('поля текущей и максимальной мощи не перепутаны',async()=>{
  const {net,calls}=mock();const x=await player(c.id,net);assert.equal(x.power,c.power);assert.equal(x.maxPower,c.maxPower);
- assert.equal(calls[0].url,`https://kg.dbapp.ru/api/character/${c.id}`);assert.equal(calls[0].options.redirect,'error');
+ assert.equal(calls[0].url,`https://kg.dbapp.ru/api/character/${c.id}`);assert.equal(calls[0].options.redirect,'manual');
  assert.equal(calls[0].options.headers.Authorization,undefined);
 });
 test('серверы, альянсы, состав и проверка сервера',async()=>{
@@ -38,6 +38,7 @@ test('маршруты и повреждённые ответы блокирую
  await assert.rejects(player(c.id,async()=>new Response('<html>not json</html>')));
  await assert.rejects(player(c.id,async()=>Response.json({character:{...c,id:3}})));
  await assert.rejects(player(c.id,async()=>Response.json({},{status:503})));
+ await assert.rejects(player(c.id,async()=>new Response(null,{status:302,headers:{location:'https://example.com/'}})));
  await assert.rejects(player(c.id,async()=>{throw Error('timeout');}));
  await assert.rejects(source('/clusters',async()=>new Response('x'.repeat(1500001),{headers:{'content-type':'application/json'}})));
 });
