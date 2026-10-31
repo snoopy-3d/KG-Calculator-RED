@@ -55,7 +55,7 @@ export class Player {
         if(answer.deleted) await this.state.storage.delete('profile');
         else await this.state.storage.put('profile',answer.profile);
         await this.state.storage.setAlarm(now+86400000);
-        await this.telegram('sendMessage',{chat_id:msg.chat.id,text:answer.text,reply_markup:answer.markup});
+        await this.telegram('sendMessage',{chat_id:msg.chat.id,text:answer.text,reply_markup:answer.markup,parse_mode:answer.parse_mode});
       } catch {console.error('update_processing_failed');}
       return new Response('ok');
     });

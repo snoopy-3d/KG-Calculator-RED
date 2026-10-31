@@ -20,17 +20,18 @@ test('дефицит, равенство, запас, отсутствие да�
   assert.match(comparison(90,1,[row]),/Не хватает: 10/);
   assert.match(comparison(100,1,[row]),/Запас: 0/);
   assert.match(comparison(110,1,[row]),/Запас: 10/);
-  assert.match(comparison(110,1,[]),/пока не добавлен/);
+  assert.match(comparison(110,1,[]),/пока отсутствуют/);
 });
 test('профиль, уровень, отмена и подтверждённое удаление',async()=>{
   let r=await route('power',{},{});r=await route('123',r.profile,{});assert.equal(r.profile.power,123);
-  r=await route('level',r.profile,{});r=await route('1',r.profile,{});assert.match(r.text,/пока не добавлен/);
+  r=await route('level',r.profile,{});r=await route('1',r.profile,{});assert.match(r.text,/Выберите волну/);
+  r=await route('wave:19',r.profile,{});assert.match(r.text,/Мощь волны/);
   assert.equal((await route('delete:yes',{power:123},{})).deleted,undefined);
   r=await route('delete',r.profile,{});r=await route('delete:yes',r.profile,{});assert.equal(r.deleted,true);assert.deepEqual(r.profile,{});
   assert.equal((await route('/cancel',{state:'power'},{})).profile.state,null);
 });
 test('усиления не выдуманы, помощник требует согласие',async()=>{
-  assert.match((await route('reinforce',{},{})).text,/пока не добавлены/);
+  assert.match((await route('reinforce',{},{})).text,/величина дефицита/);
   const r=await route('ai',{}, {AI_ENABLED:'true'});assert.equal(r.profile.state,null);assert.match(r.text,/внешним/);
 });
 test('failover при HTTP-ошибке и недопустимом ответе',async()=>{
