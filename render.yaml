@@ -1,0 +1,19 @@
+services:
+  - type: worker
+    name: kg-calculator-red
+    runtime: python
+    plan: starter
+    numInstances: 1
+    buildCommand: pip install -r requirements.txt && python -m unittest -v test_bot
+    startCommand: python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_PATH
+        value: /var/data/profiles.sqlite3
+    disk:
+      name: profiles
+      mountPath: /var/data
+      sizeGB: 1
