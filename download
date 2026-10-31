@@ -1,7 +1,0 @@
-.env
-.env.*
-!.env.example
-*.sqlite3*
-__pycache__/
-.venv/
-.pytest_cache/

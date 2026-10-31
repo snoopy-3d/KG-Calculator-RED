@@ -1,0 +1,16 @@
+name = "kg-calculator-red"
+main = "worker.mjs"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+AI_ENABLED = "false"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+
+[[durable_objects.bindings]]
+name = "PLAYERS"
+class_name = "Player"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Player"]

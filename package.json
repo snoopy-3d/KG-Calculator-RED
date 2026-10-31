@@ -1,0 +1,16 @@
+{
+  "name": "kg-calculator-red",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "dev": "wrangler dev",
+    "deploy": "node --test && wrangler deploy",
+    "check:deploy": "wrangler deploy --dry-run",
+    "telegram:setup": "node telegram-setup.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
