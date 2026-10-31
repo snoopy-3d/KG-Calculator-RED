@@ -18,14 +18,14 @@ export async function databaseMenu(t,p,result,net){
     }
     if(t==='db:server-input') {p.state='db:server-input';return result('🌐 Отправьте номер сервера. Или откройте список серверов.',buttons([[['📋 Список серверов','db:servers']],back]));}
     if(t==='db:servers'){
-      p.state=null;const rows=await groups(net);
-      return result('🌐 Выберите группу серверов или введите номер.',buttons([...rows.map(g=>[[`${g.name} · ${g.description}`.slice(0,60),`db:group:${g.id}:0`]]),[['🔢 Ввести номер','db:server-input']],back]));
+      p.state='db:server-input';const rows=await groups(net);
+      return result('🌐 Выберите группу серверов или отправьте номер сервера сообщением.',buttons([[['✏️ Ввести сервер вручную','db:server-input']],...rows.map(g=>[[`${g.name} · ${g.description}`.slice(0,60),`db:group:${g.id}:0`]]),back]));
     }
     let m;
     if((m=/^db:group:(\d{1,5}):(\d{1,4})$/.exec(t))){
-      p.state=null;const rows=await servers(Number(m[1]),net);const {items,at,pages}=pageItems(rows,Number(m[2]),18);
+      p.state='db:server-input';const rows=await servers(Number(m[1]),net);const {items,at,pages}=pageItems(rows,Number(m[2]),18);
       const grid=[];for(let i=0;i<items.length;i+=3)grid.push(items.slice(i,i+3).map(s=>[String(s.id),`db:server:${s.id}:0`]));
-      return result(`🌐 Выберите сервер · ${at+1}/${pages}${!rows.length?'\nДоступных серверов пока нет.':''}`,buttons([...grid,...navigation(at,pages,`db:group:${m[1]}:`),[['⬅️ Группы серверов','db:servers']],back]));
+      return result(`🌐 Выберите сервер · ${at+1}/${pages}\nИли отправьте номер сервера сообщением.${!rows.length?'\nДоступных серверов пока нет.':''}`,buttons([[['✏️ Ввести сервер вручную','db:server-input']],...grid,...navigation(at,pages,`db:group:${m[1]}:`),[['⬅️ Группы серверов','db:servers']],back]));
     }
     if((m=/^db:server:(\d{1,6}):(\d{1,4})$/.exec(t))){
       p.state=null;const server=Number(m[1]);if(server<1)throw new SourceError('input');
@@ -107,6 +107,6 @@ export async function databaseMenu(t,p,result,net){
   }catch(e){
     const kind=e instanceof SourceError?e.kind:'unavailable';
     const message=kind==='missing'?'Запись не найдена. Проверьте ID или номер сервера.':kind==='context'?'Сначала выберите сервер и альянс заново.':'Данные сейчас недоступны. Попробуйте позже. Сохранённая мощь не изменена.';
-    return result(message,buttons([[['🌐 Выбрать сервер','db:servers']],[['🆔 Игрок по ID','db:id']],back]));
+    return result(message,buttons([[['✏️ Ввести сервер вручную','db:server-input']],[['🌐 Выбрать сервер','db:servers']],[['🆔 Игрок по ID','db:id']],back]));
   }
 }

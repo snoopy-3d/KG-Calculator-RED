@@ -44,7 +44,7 @@ test('маршруты и повреждённые ответы блокирую
 });
 test('полный путь сервер → альянс → участник → подтверждение импорта',async()=>{
  const {net}=mock();let r=await route('db:servers',{}, {},net);assert.match(r.text,/группу/);
- r=await route('db:group:6:0',r.profile,{},net);assert.equal(r.markup.inline_keyboard[0][0].callback_data,'db:server:2771:0');
+ r=await route('db:group:6:0',r.profile,{},net);assert.ok(r.markup.inline_keyboard.flat().some(b=>b.callback_data==='db:server:2771:0'));
  r=await route('db:server:2771:0',r.profile,{},net);assert.equal(r.profile.db.server,2771);
  r=await route(`db:alliance:${aid}`,r.profile,{},net);assert.match(r.text,/В составе базы: 1/);
  r=await route('db:roster:0',r.profile,{},net);assert.match(r.text,/Тестовый игрок/);assert.doesNotMatch(r.text,/123456/);
@@ -53,6 +53,15 @@ test('полный путь сервер → альянс → участник �
  r=await route('db:save-yes',r.profile,{},net);assert.equal(r.profile.power,c.power);assert.equal(r.profile.game.id,c.id);
  r=await route('👤 Мой профиль',r.profile,{},net);assert.match(r.text,/Тестовый игрок/);assert.doesNotMatch(r.text,/123456/);
  r=await route('power',r.profile,{},net);r=await route('321',r.profile,{},net);assert.equal(r.profile.power,321);assert.equal(r.profile.game,null);
+});
+test('ручной сервер из групп, списка и кнопки; неверный ввод не выбирает альянс',async()=>{
+ const {net}=mock();
+ for(const start of ['db:servers','db:group:6:0','db:server-input']){
+  let r=await route(start,{}, {},net);
+  assert.equal(r.profile.state,'db:server-input');
+  r=await route('не номер',r.profile,{},net);assert.match(r.text,/Введите номер сервера/);
+  r=await route('2771',r.profile,{},net);assert.equal(r.profile.db.server,2771);assert.match(r.text,/Выберите альянс/);
+ }
 });
 test('неудачная загрузка не затирает профиль; сохранение только после подтверждения',async()=>{
  const {net}=mock();let r=await route('db:id',{power:123},{},net);r=await route('999',r.profile,{},net);assert.equal(r.profile.power,123);assert.match(r.text,/не найдена/);
