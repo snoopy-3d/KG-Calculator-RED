@@ -1,7 +1,8 @@
+import {upgradeMenu} from './upgrade.mjs';
 import { verifiedThreshold } from './data.mjs';
 import {databaseMenu,waveRows,waveNote} from './kg-menu.mjs';
 
-export const MENU = { keyboard: [[{text:'👻 Духи'}],[{text:'👤 Мой профиль'},{text:'❓ Помощь'}]], resize_keyboard:true, is_persistent:true };
+export const MENU = { keyboard: [[{text:'👻 Духи'},{text:'🧮 Калькуляторы'}],[{text:'👤 Мой профиль'},{text:'❓ Помощь'}]], resize_keyboard:true, is_persistent:true };
 const buttons = rows => ({inline_keyboard:rows.map(row=>row.map(([text,callback_data])=>({text,callback_data})))});
 export const FAQ = {
   spirits:'👻 Духи\nВыберите сервер и альянс или найдите игрока по ID. Укажите уровень события и волну. Покажу мощь волны и дефицит участников. У 19-й волны возможна погрешность. Оценку победы не даю.',
@@ -49,6 +50,9 @@ export async function route(input, profile, env, net=fetch) {
   const t=input.trim();
   const result=(text,markup=buttons([[['⬅️ Главное меню','home']]]))=>({profile:p,text,markup});
   if (t==='/start' || t==='/cancel' || t==='home') {p.state=null; return {...home(),profile:p};}
+  if (['🧮 Калькуляторы','/calc','calc'].includes(t)) {p.state=null;return upgradeMenu('calc',p,result);}
+  if (['👻 Духи','👤 Мой профиль','❓ Помощь','spirits','power','level','delete','ai'].includes(t)) p.state=null;
+  const upgrade=upgradeMenu(t,p,result);if(upgrade)return upgrade;
   if (t==='👻 Духи') {
     p.state=null;
     return result('👻 Духи\nВыберите действие.',buttons([[['🌐 Сервер и альянс','db:servers']],[['🆔 Игрок по ID','db:id']],[['🔮 Уровень · мой профиль','level']],[['⚔️ Кого крепить','reinforce']],[['⬅️ Главное меню','home']]]));

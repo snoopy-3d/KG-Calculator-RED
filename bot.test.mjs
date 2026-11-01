@@ -5,7 +5,7 @@ import worker,{Player} from './worker.mjs';
 import {verifiedThreshold} from './data.mjs';
 import {setup} from './telegram-setup.mjs';
 const row={level:1,power:100,verified:true,evidence:'TEST ONLY',verifiedAt:'2026-10-31'};
-test('только три раздела',()=>assert.deepEqual(MENU.keyboard.flat().map(x=>x.text),['👻 Духи','👤 Мой профиль','❓ Помощь']));
+test('разделы с калькуляторами',()=>assert.deepEqual(MENU.keyboard.flat().map(x=>x.text),['👻 Духи','🧮 Калькуляторы','👤 Мой профиль','❓ Помощь']));
 test('целые значения, границы, неверный ввод',()=>{
   for(const s of ['-1','1.5','1e6','1 млн','9007199254740992',''])assert.equal(parsePower(s),null);
   assert.equal(parsePower('9007199254740991'),Number.MAX_SAFE_INTEGER);assert.equal(parsePower('0'),0);
